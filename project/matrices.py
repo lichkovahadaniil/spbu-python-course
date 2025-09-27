@@ -1,0 +1,56 @@
+from __future__ import annotations
+from typing import Union
+from vectors import *
+
+
+class Matrix:
+    def __init__(self, matrix: list[list[Union[int, float]]]):
+        """constructor
+
+        save input value as a 'value' of matrix
+        """
+        self.value = [Vector(matrix[i]) for i in range(len(matrix))]
+
+        for i in range(1, len(matrix)):
+            if not matrix or not matrix[0]:
+                raise ValueError("The incorrect dimension of the matrix")
+
+    def __getitem__(self, key: int) -> Vector:
+        """The operator for get vector from the matrix by the index (key)
+
+        args:
+            key (int): key for vector
+        returns:
+            Vector: vector, which is in this matrix by the key
+        """
+        return self.value[key]
+
+    def __len__(self) -> int:
+        """length function
+
+        returns:
+            int: len of the matrix-type Python object
+        """
+        return len(self.value)
+
+    def __add__(self, matrix: Matrix) -> Matrix:
+        """Implementation of the matrix addition
+
+        args:
+            matrix (Matrix): another matrix for addition with this
+        returns:
+            Matrix: the result of adding two matrices
+        """
+
+        if len(matrix) != len(self) or len(self[0]) != len(matrix[0]):
+            raise ValueError("Matrices must be the same dimension")
+
+        return Matrix([matrix[i] + self[i] for i in range(len(self))])
+
+    def __str__(self) -> str:
+        """The overload for print function
+
+        returns:
+            str: The str-matrix, not the address of the object
+        """
+        return "[" + "\n".join(str(vec) for vec in self.value) + "]"

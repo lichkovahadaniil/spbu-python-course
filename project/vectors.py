@@ -6,19 +6,22 @@ class Vector:
     # constructor
     def __init__(self, vec: list[Union[int, float]]):
         """constructor
-        save input value in the 'value'
+
+        save input value as a 'value' of vector
         """
         self.value = vec
+        if len(vec) == 0:
+            raise ValueError("The incorrect value of the vector")
 
     def __len__(self) -> int:
-        """len function
+        """length function
 
         returns:
-            len of the vector-type Python object
+            int: len of the vector-type Python object
         """
         return len(self.value)
 
-    def sProduct(self, vec1: Vector) -> Union[int, float]:
+    def sProduct(self, vec1: Vector) -> float:
         """scalar product
 
         args:
@@ -49,3 +52,35 @@ class Vector:
             float: the norm of this vector
         """
         return sum([x**2 for x in self.value]) ** 0.5
+
+    def __getitem__(self, key: int) -> float:
+        """The operator for get value from the vector by the index (key)
+
+        args:
+            key (int): key for value
+        returns:
+            float: value, which is in this vector by the key
+        """
+        return self.value[key]
+
+    # addition
+    def __add__(self, vec: Vector) -> Vector:
+        """additional functionality for correct matrix addition work
+
+        args:
+            vec (Vector): another vector for the addition
+        returns:
+            Vector: result of addition
+        """
+        if len(self) != len(vec):
+            raise ValueError("Dimension error")
+
+        return Vector([self[i] + vec[i] for i in range(len(self))])
+
+    def __str__(self) -> str:
+        """The overload for print function
+
+        returns:
+            str: The str-vector, not the address of the object
+        """
+        return f"{self.value}"
