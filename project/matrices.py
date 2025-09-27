@@ -54,3 +54,39 @@ class Matrix:
             str: The str-matrix, not the address of the object
         """
         return "[" + "\n".join(str(vec) for vec in self.value) + "]"
+
+    def transp(self) -> Matrix:
+        """Matrix transposition
+
+        returns:
+            A matrix with columns replaced by rows
+        """
+        return Matrix(
+            [
+                Vector([self[i][j] for i in range(len(self))])
+                for j in range(len(self[0]))
+            ]
+        )
+
+    def mProduct(self, matrix: Matrix) -> Matrix:
+        """The matrix multiplication
+
+        args:
+            matrix (Matrix): another matrix for multiplication with current
+        returns:
+            Matrix: the result of multiplying two matrices
+        """
+        if len(self[0]) != len(matrix):
+            raise ValueError("Dimension error, must be n*k and k*m")
+
+        return Matrix(
+            [
+                Vector(
+                    [
+                        sum([self[i][j] * matrix[j][k] for j in range(len(self[0]))])
+                        for k in range(len(matrix[0]))
+                    ]
+                )
+                for i in range(len(self))
+            ]
+        )  # i can write it "in one line", but.. it's sooooo unreadable
