@@ -1,11 +1,11 @@
 from __future__ import annotations
-from typing import Union
+from typing import Sequence
 import math
 
 
 class Vector:
     # constructor
-    def __init__(self, vec: list[Union[int, float]]):
+    def __init__(self, vec: Sequence[int | float]):
         """constructor
 
         save input value as a 'value' of vector
@@ -86,10 +86,12 @@ class Vector:
         """
         return f"{self.value}"
 
-    def __eq__(self, other: Vector) -> bool:
+    def __eq__(self, other: object) -> bool:
         """The overload for the == or !=
 
         returns:
             bool: True if equal, else False
         """
+        if not isinstance(other, Vector):
+            return NotImplemented
         return self.value == other.value

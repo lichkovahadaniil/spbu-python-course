@@ -1,18 +1,26 @@
 from __future__ import annotations
-from typing import Union
+from typing import Sequence
+from typing import cast
 from project.vectors import Vector
 
 
 class Matrix:
-    def __init__(self, matrix: list[list[Union[int, float]]]):
+    def __init__(self, matrix: Sequence[Sequence[int | float]] | Sequence[Vector]):
         """constructor
 
         save input value as a 'value' of matrix
         """
-        self.value = [Vector(matrix[i]) for i in range(len(matrix))]
-
-        if not matrix or not matrix[0]:
+        if not matrix:
             raise ValueError("The incorrect dimension of the matrix")
+
+        if isinstance(matrix[0], Vector):
+            self.value = list(
+                cast(Sequence[Vector], matrix)
+            )  # already is vectors, but sequence, i converted it to a list
+        else:
+            self.value = [
+                Vector(row) for row in cast(Sequence[Sequence[int | float]], matrix)
+            ]
 
         for i in range(1, len(self)):
             if len(self[i]) != len(self[i - 1]):
@@ -94,10 +102,12 @@ class Matrix:
             ]
         )  # i can write it "in one line", but.. it's sooooo unreadable
 
-    def __eq__(self, other: Matrix) -> bool:
+    def __eq__(self, other: object) -> bool:
         """The overload for the == or !=
 
         returns:
             bool: True if equal, else False
         """
+        if not isinstance(other, Matrix):
+            return NotImplemented
         return self.value == other.value
