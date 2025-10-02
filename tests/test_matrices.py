@@ -30,7 +30,7 @@ def test_addition(mt1, mt2, output):
 )
 def test_multi(mt1, mt2, output):
     m1, m2, m3 = Matrix(mt1), Matrix(mt2), Matrix(output)
-    result = m1.mProduct(m2)
+    result = m1 * m2
 
     for i in range(len(result)):
         for j in range(len(result[0])):
@@ -61,7 +61,7 @@ def test_multi_dim():
     m1 = Matrix([[1, 2], [3, 4]])  # 2x2
     m2 = Matrix([[1, 2, 3]])  # 1x3
     with pytest.raises(ValueError, match="Dimension error"):
-        m1.mProduct(m2)
+        m1 * m2
 
 
 def test_add_dim():

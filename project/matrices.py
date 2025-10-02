@@ -5,10 +5,16 @@ from project.vectors import Vector
 
 
 class Matrix:
-    def __init__(self, matrix: Sequence[Sequence[int | float]] | Sequence[Vector]):
-        """constructor
+    """
+    The matrix class has the following methods:
+    addition, multiplication, and transpose.
+    """
 
-        save input value as a 'value' of matrix
+    def __init__(self, matrix: Sequence[Sequence[int | float]] | Sequence[Vector]):
+        """constructor - save input value as a 'value' of matrix
+
+        args:
+            matrix (Sequence[Sequence[int | float]): input matrix values
         """
         if not matrix:
             raise ValueError("The incorrect dimension of the matrix")
@@ -79,7 +85,7 @@ class Matrix:
             ]
         )
 
-    def mProduct(self, matrix: Matrix) -> Matrix:
+    def __mul__(self, matrix: Matrix) -> Matrix:
         """The matrix multiplication
 
         args:
@@ -100,7 +106,7 @@ class Matrix:
                 )
                 for i in range(len(self))
             ]
-        )  # i can write it "in one line", but.. it's sooooo unreadable
+        )  # ok, i can't write it "in one line"
 
     def __eq__(self, other: object) -> bool:
         """The overload for the == or !=

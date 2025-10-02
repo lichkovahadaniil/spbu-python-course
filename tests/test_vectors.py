@@ -6,9 +6,9 @@ import math
 @pytest.mark.parametrize(
     "vec1, vec2, output", [([1, 2], [3, 4], 11), ([-1, 2.5], [3, -4], -13)]
 )
-def test_sProduct(vec1, vec2, output):
+def test_scalar_product(vec1, vec2, output):
     v1, v2 = Vector(vec1), Vector(vec2)
-    assert v1.sProduct(v2) == output
+    assert v1 * v2 == output
 
 
 @pytest.mark.parametrize(

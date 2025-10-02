@@ -4,11 +4,17 @@ import math
 
 
 class Vector:
+    """
+    The vector class has the following methods:
+    scalar product, length calculation, finding the angle between vectors.
+    """
+
     # constructor
     def __init__(self, vec: Sequence[int | float]):
-        """constructor
+        """constructor - save input value as a 'value' of matrix
 
-        save input value as a 'value' of vector
+        args:
+            vec (Sequence[int | float]): input vector values
         """
         self.value = vec
         if len(self) == 0:
@@ -22,7 +28,7 @@ class Vector:
         """
         return len(self.value)
 
-    def sProduct(self, vec1: Vector) -> float:
+    def __mul__(self, vec1: Vector) -> float:
         """scalar product
 
         args:
@@ -44,7 +50,7 @@ class Vector:
         returns:
             float: the angle between this and the another vector
         """
-        return math.acos(self.sProduct(vec1) / (self.norm() * vec1.norm()))
+        return math.acos(self * vec1 / (self.norm() * vec1.norm()))
 
     def norm(self) -> float:
         """the norm (length) of this vector
