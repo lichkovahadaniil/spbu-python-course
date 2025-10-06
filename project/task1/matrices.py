@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Sequence
 from typing import cast
-from project.vectors import Vector
+from project.task1.vectors import Vector
 
 
 class Matrix:

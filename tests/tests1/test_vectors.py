@@ -1,5 +1,5 @@
 import pytest
-from project.vectors import Vector
+from project.task1.vectors import Vector
 import math
 
 

@@ -1,7 +1,5 @@
 import pytest
-from project.vectors import Vector
-from project.matrices import Matrix
-import math
+from project.task1.matrices import Matrix
 
 
 @pytest.mark.parametrize(
