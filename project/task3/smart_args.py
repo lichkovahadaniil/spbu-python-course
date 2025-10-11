@@ -100,32 +100,3 @@ class Isolated:
         """
         if isinstance(obj, Evaluated):
             raise KeyError("no need to combine Isolated and Evaluated")
-
-
-def get_random_number():
-    return random.randint(0, 100)
-
-
-# Для x дефолтное значение всегда будет одинаковое, оно вычислится один раз
-# Для y дефолтное значение может быть разным, так как оно будет
-# вычисляться КАЖДЫЙ раз, если не передано значение y
-@smart_args
-def check_evaluation(*, x=get_random_number(), y=Evaluated(get_random_number)):
-    print(x, y)
-
-
-check_evaluation()
-check_evaluation()
-check_evaluation(y=150)
-
-
-@smart_args
-def check_isolation(*, d=Isolated()):
-    d["a"] = 0
-    return d
-
-
-no_mutable = {"a": 10}
-
-print(check_isolation(d=no_mutable))
-print(no_mutable)
