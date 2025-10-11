@@ -83,10 +83,7 @@ def deco_cache(num: int = 0) -> Callable:
             nonlocal save
             keys = tuple(
                 [make_cache(a) for a in args]
-                + [
-                    (make_cache(k), make_cache(kwargs[k]))
-                    for k in sorted(kwargs.items())
-                ]
+                + [(make_cache(k), make_cache(v)) for k, v in sorted(kwargs.items())]
             )  # tuple is caching (as opposed to list)
 
             print(keys)
