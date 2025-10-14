@@ -20,48 +20,39 @@ def smart_args(func: Callable) -> Callable:
     sg = signature(func)  # list of args and default values
     par = sg.parameters
 
-    def wrapper(*args, **kwargs) -> Callable:
-        """
-        wrapper
-
-        important:
-            - only default values for isolated
-            - default and **kwargs for evaluated
-        """
+    def wrapper(*args, **kwargs):
         assert len(args) == 0, "must be only kwargs"
 
         dct_args_iso = sg.bind_partial(*args)
         dct_args_iso.apply_defaults()
-
         dct_args_eva = sg.bind_partial(*args, **kwargs)
         dct_args_eva.apply_defaults()
 
-        flag_iso, flag_eva = False, False
-        isolated_keys = set()
+        final_args = {}
 
         for key, value in dct_args_iso.arguments.items():
             if isinstance(value, Isolated):
                 if key in kwargs:
-                    dct_args_iso.arguments[key] = copy.deepcopy(kwargs[key])
-                isolated_keys.add(key)
-                flag_iso = True
-            if isinstance(value, Evaluated):
-                flag_eva = True
+                    final_args[key] = copy.deepcopy(kwargs[key])
+                elif hasattr(value, "obj"):
+                    final_args[key] = copy.deepcopy(value.obj)
+                else:
+                    final_args[key] = None
+                continue
 
-        for key, value in dct_args_eva.arguments.items():
             if isinstance(value, Evaluated):
-                if key not in kwargs:
-                    dct_args_eva.arguments[key] = value.func()
-                flag_eva = True
+                if key in kwargs:
+                    final_args[key] = kwargs[key]
+                else:
+                    final_args[key] = value.func()
+                continue
 
-        if flag_eva:
-            return func(**dct_args_eva.arguments)
-        else:
-            final_args = dict(dct_args_iso.arguments)
-            for k, v in kwargs.items():
-                if k not in isolated_keys:
-                    final_args[k] = v
-            return func(**final_args)
+            if key in kwargs:
+                final_args[key] = kwargs[key]
+            else:
+                final_args[key] = value
+
+        return func(**final_args)
 
     return wrapper
 
@@ -101,3 +92,4 @@ class Isolated:
         """
         if isinstance(obj, Evaluated):
             raise KeyError("no need to combine Isolated and Evaluated")
+        self.obj = obj

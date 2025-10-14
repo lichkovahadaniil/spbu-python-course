@@ -66,7 +66,6 @@ def deco_cache(num: int = 0) -> Callable:
 
     def wrapper(func: Callable) -> Callable:
         save = dict()
-        curr = dict()
 
         def make_cache(arg):
             if isinstance(arg, dict):
@@ -76,6 +75,7 @@ def deco_cache(num: int = 0) -> Callable:
             return arg
 
         def inner(*args, **kwargs) -> Any:
+            curr = dict()
 
             if num == 0:
                 return func(*args, **kwargs)

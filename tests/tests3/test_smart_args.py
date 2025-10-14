@@ -293,7 +293,38 @@ class TestSmartArgs:
         assert result2["count"] == 5
         assert call_count == 2
 
-        assert test_data == {"key": "value"}
+    def test_smart_args_isolated_and_evaluated_combined(self):
+        """checks the correct operation of Evaluated and Isolated on different arguments of the function"""
+
+        call_count = 0
+
+        def generate_id():
+            nonlocal call_count
+            call_count += 1
+            return f"id_{call_count}"
+
+        shared_list = [1, 2, 3]
+
+        @smart_args
+        def my_func(*, data=Isolated(shared_list), uid=Evaluated(generate_id)):
+
+            data.append(uid)
+            return data, uid
+
+        data1, uid1 = my_func()
+        assert data1 == [1, 2, 3, "id_1"]
+        assert uid1 == "id_1"
+        assert call_count == 1
+
+        data2, uid2 = my_func()
+        assert data2 == [1, 2, 3, "id_2"]
+        assert uid2 == "id_2"
+        assert call_count == 2
+
+        assert data1 is not data2
+        assert data1 != data2
+
+        assert shared_list == [1, 2, 3]
 
     def test_smart_args_error_handling(self):
         """test error handling in smart_args"""
