@@ -1,5 +1,6 @@
 import pytest
 from project.task3.curry_cache import curry_explicit, uncurry_explicit, deco_cache
+from math import prod
 
 
 class TestCurryExplicit:
@@ -88,6 +89,42 @@ class TestCurryExplicit:
         result = curried("Hello")(" ")("World")
         assert result == "Hello World"
 
+    def test_curry_with_builtin_functions(self):
+        """test currying with built-in Python functions"""
+
+        curried_max = curry_explicit(max, 2)
+        result = curried_max(5)(10)
+        assert result == 10
+
+        curried_min = curry_explicit(min, 3)
+        result = curried_min(5)(3)(8)
+        assert result == 3
+
+        curried_pow = curry_explicit(pow, 2)
+        result = curried_pow(2)(3)
+        assert result == 8
+
+    def test_curry_arbitrary_arity(self):
+        """test currying with functions of arbitrary arity"""
+
+        def func_any_args(*args):
+            return prod(args)
+
+        curried_any = curry_explicit(func_any_args, 6)
+        result = curried_any(1)(2)(3)(4)(5)(6)
+        assert result == 720
+
+    def test_curry_single_argument(self):
+        """test that curried function accepts only one argument at a time"""
+
+        def add_two(x, y):
+            return x + y
+
+        curried = curry_explicit(add_two, 2)
+
+        with pytest.raises(TypeError, match="Incorrect quantity of arguments"):
+            curried(1, 2, 3)
+
 
 class TestUncurryExplicit:
     """tests for uncurry_explicit"""
@@ -169,6 +206,35 @@ class TestUncurryExplicit:
         original_result = original_func(*args)
         uncurried_result = uncurried(*args)
         assert original_result == uncurried_result == 11
+
+    def test_uncurry_with_builtin_functions(self):
+        """test uncurry with built-in Python functions"""
+
+        curried_max = curry_explicit(max, 2)
+        uncurried_max = uncurry_explicit(curried_max, 2)
+        result = uncurried_max(5, 10)
+        assert result == 10
+
+        curried_min = curry_explicit(min, 3)
+        uncurried_min = uncurry_explicit(curried_min, 3)
+        result = uncurried_min(5, 3, 8)
+        assert result == 3
+
+        curried_pow = curry_explicit(pow, 2)
+        uncurried_pow = uncurry_explicit(curried_pow, 2)
+        result = uncurried_pow(2, 3)
+        assert result == 8
+
+    def test_uncurry_arbitrary_arity(self):
+        """test uncurry with functions of arbitrary arity"""
+
+        def func_any_args(*args):
+            return prod(args)
+
+        curried = curry_explicit(func_any_args, 6)
+        uncurried = uncurry_explicit(curried, 6)
+        result = uncurried(1, 2, 3, 4, 5, 6)
+        assert result == 720
 
 
 class TestDecoCache:
@@ -380,3 +446,93 @@ class TestDecoCache:
         simple_func(3)
 
         assert call_count == 4
+
+    def test_cache_with_builtin_functions(self):
+        """test caching with built in Python functions"""
+        call_count = 0
+
+        @deco_cache(3)
+        def cached_max(*args):
+            nonlocal call_count
+            call_count += 1
+            return max(args)
+
+        result1 = cached_max(1, 5, 3)
+        assert result1 == 5
+        assert call_count == 1
+
+        result2 = cached_max(1, 5, 3)
+        assert result2 == 5
+        assert call_count == 1
+
+        result3 = cached_max(2, 8, 1)
+        assert result3 == 8
+        assert call_count == 2
+
+    def test_cache_with_builtin_min(self):
+        """test caching with built-in min function"""
+        call_count = 0
+
+        @deco_cache(2)
+        def cached_min(*args):
+            nonlocal call_count
+            call_count += 1
+            return min(args)
+
+        result1 = cached_min(10, 5, 8)
+        assert result1 == 5
+        assert call_count == 1
+
+        result2 = cached_min(10, 5, 8)
+        assert result2 == 5
+        assert call_count == 1
+
+        result3 = cached_min(3, 1, 7)
+        assert result3 == 1
+        assert call_count == 2
+
+    def test_cache_with_builtin_pow(self):
+        """test caching with built-in pow function"""
+        call_count = 0
+
+        @deco_cache(2)
+        def cached_pow(base, exp):
+            nonlocal call_count
+            call_count += 1
+            return pow(base, exp)
+
+        result1 = cached_pow(2, 3)
+        assert result1 == 8
+        assert call_count == 1
+
+        result2 = cached_pow(2, 3)
+        assert result2 == 8
+        assert call_count == 1
+
+        result3 = cached_pow(3, 2)
+        assert result3 == 9
+        assert call_count == 2
+
+    def test_cache_after_iterations(self):
+        """test cache behavior after multiple iterations"""
+        call_count = 0
+
+        @deco_cache(3)
+        def expensive_calculation(x):
+            nonlocal call_count
+            call_count += 1
+            return x**2
+
+        for _ in range(2):
+            assert expensive_calculation(1) == 1
+            assert expensive_calculation(2) == 4
+            assert expensive_calculation(3) == 9
+            assert call_count == 3
+
+        assert expensive_calculation(4) == 16
+        assert expensive_calculation(2) == 4
+        assert expensive_calculation(3) == 9
+        assert call_count == 4
+
+        assert expensive_calculation(1) == 1
+        assert call_count == 5

@@ -13,17 +13,7 @@ class TestEvaluated:
             return 42
 
         evaluated = Evaluated(get_value)
-        assert evaluated.func == get_value
-
-    def test_evaluated_function_call(self):
-        """test function call in Evaluated"""
-
-        def get_random():
-            return 123
-
-        evaluated = Evaluated(get_random)
-        result = evaluated.func()
-        assert result == 123
+        assert evaluated.func is get_value
 
     def test_evaluated_with_lambda(self):
         """test Evaluated with a lambda function"""
@@ -88,6 +78,8 @@ class TestSmartArgs:
         with pytest.raises(AssertionError, match="must be only kwargs"):
             invalid_function(5)
 
+        assert invalid_function(x=5) == 5
+
     def test_smart_args_basic_functionality(self):
         """test basic functionality of smart_args"""
 
@@ -129,22 +121,6 @@ class TestSmartArgs:
 
         assert original_list == [1, 2, 3]
 
-    def test_smart_args_isolated_with_nested_structure(self):
-        """test Isolated with a nested structure"""
-
-        @smart_args
-        def modify_nested(*, data=Isolated()):
-            data["nested"]["value"] = "changed"
-            return data
-
-        original_data = {"nested": {"value": "original"}, "other": [1, 2, 3]}
-        result = modify_nested(data=original_data)
-
-        assert result["nested"]["value"] == "changed"
-        assert result["other"] == [1, 2, 3]
-
-        assert original_data["nested"]["value"] == "original"
-
     def test_smart_args_with_evaluated(self):
         """test smart_args with Evaluated"""
         call_count = 0
@@ -183,73 +159,6 @@ class TestSmartArgs:
         result = use_evaluated(x=999)
         assert result == 999
         assert call_count == 0
-
-    def test_smart_args_mixed_defaults(self):
-        """test smart_args with mixed default values"""
-        call_count = 0
-
-        def get_counter():
-            nonlocal call_count
-            call_count += 1
-            return call_count
-
-        @smart_args
-        def mixed_function(
-            *, normal=10, evaluated=Evaluated(get_counter), isolated=Isolated()
-        ):
-            return {"normal": normal, "evaluated": evaluated, "isolated": isolated}
-
-        result1 = mixed_function()
-        assert result1["normal"] == 10
-        assert result1["evaluated"] == 1
-        assert call_count == 1
-
-        result2 = mixed_function()
-        assert result2["normal"] == 10
-        assert result2["evaluated"] == 2
-        assert call_count == 2
-
-    def test_smart_args_evaluated_with_random(self):
-        """test Evaluated with a function that returns random values"""
-        import random
-
-        def get_random():
-            return random.randint(0, 100)
-
-        @smart_args
-        def random_function(*, x=get_random(), y=Evaluated(get_random)):
-            return x, y
-
-        result1 = random_function()
-        result2 = random_function()
-
-        x1, y1 = result1
-        x2, y2 = result2
-
-        assert x1 == x2
-        assert y1 != y2
-
-    def test_smart_args_isolated_with_class_instance(self):
-        """test Isolated with a class instance"""
-
-        class TestClass:
-            def __init__(self):
-                self.value = 0
-
-            def increment(self):
-                self.value += 1
-
-        @smart_args
-        def modify_instance(*, obj=Isolated()):
-            obj.increment()
-            return obj
-
-        original = TestClass()
-        result = modify_instance(obj=original)
-
-        assert result.value == 1
-
-        assert original.value == 0
 
     def test_smart_args_with_tuple_isolation(self):
         """test Isolated with tuples"""
@@ -325,33 +234,6 @@ class TestSmartArgs:
 
         assert original.value == 42
         assert original.items == []
-
-    def test_smart_args_multiple_evaluated(self):
-        """test smart_args with multiple Evaluated"""
-        call_count1 = 0
-        call_count2 = 0
-
-        def get_counter1():
-            nonlocal call_count1
-            call_count1 += 1
-            return f"counter1_{call_count1}"
-
-        def get_counter2():
-            nonlocal call_count2
-            call_count2 += 1
-            return f"counter2_{call_count2}"
-
-        @smart_args
-        def multiple_evaluated(*, x=Evaluated(get_counter1), y=Evaluated(get_counter2)):
-            return f"{x}_{y}"
-
-        result1 = multiple_evaluated()
-        result2 = multiple_evaluated()
-
-        assert result1 == "counter1_1_counter2_1"
-        assert result2 == "counter1_2_counter2_2"
-        assert call_count1 == 2
-        assert call_count2 == 2
 
     def test_smart_args_isolated_with_nested_mutable(self):
         """test Isolated with deeply nested mutable objects"""

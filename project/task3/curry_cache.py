@@ -86,8 +86,6 @@ def deco_cache(num: int = 0) -> Callable:
                 + [(make_cache(k), make_cache(v)) for k, v in sorted(kwargs.items())]
             )  # tuple is caching (as opposed to list)
 
-            print(keys)
-
             if keys not in save:
                 res = func(*args, **kwargs)
                 save[keys] = res
@@ -95,7 +93,7 @@ def deco_cache(num: int = 0) -> Callable:
                 res = save[keys]
 
             cnt = 0
-            while len(save) > num:
+            if len(save) > num:
                 for key in save:
                     if cnt > 0:
                         curr[key] = save[key]
