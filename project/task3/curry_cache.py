@@ -14,7 +14,7 @@ def curry_explicit(func: Callable, arity: int) -> Callable:
     if arity < 0:
         raise ValueError(f"The arity must be greater, than 0")
 
-    curr = dict()
+    curr: dict[int, tuple[Any, ...]] = dict()
 
     def inner(*args: Any) -> Callable:
         nonlocal curr
