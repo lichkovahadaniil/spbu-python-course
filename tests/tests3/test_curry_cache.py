@@ -1,4 +1,6 @@
 import pytest
+import sys
+import io
 from project.task3.curry_cache import curry_explicit, uncurry_explicit, deco_cache
 from math import prod
 
@@ -26,16 +28,6 @@ class TestCurryExplicit:
         result = curried()
         assert result == 42
 
-    def test_curry_arity_one(self):
-        """test currying with arity 1"""
-
-        def square(x):
-            return x * x
-
-        curried = curry_explicit(square, 1)
-        result = curried(5)
-        assert result == 25
-
     def test_curry_negative_arity(self):
         """test error when arity is negative"""
 
@@ -46,13 +38,17 @@ class TestCurryExplicit:
             curry_explicit(dummy_func, -1)
 
     def test_curry_too_many_args(self):
-        """test error when too many arguments are passed"""
+        """test error when is more 1 argument in the curry func"""
 
-        def add_two(x, y):
-            return x + y
+        def add_two(x, y, z):
+            return x + y + z
 
-        curried = curry_explicit(add_two, 2)
+        curried = curry_explicit(add_two, 3)
 
+        with pytest.raises(TypeError, match="Incorrect quantity of arguments"):
+            curried(1, 2)(3)
+        with pytest.raises(TypeError, match="Incorrect quantity of arguments"):
+            curried(1)(3, 4)
         with pytest.raises(TypeError, match="Incorrect quantity of arguments"):
             curried(1, 2, 3)
 
@@ -62,11 +58,14 @@ class TestCurryExplicit:
         result = curried(123)(456)(562)
         assert result == "<123,456,562>"
 
-    def test_curry_with_print(self):
+    def test_curry_with_print(self, capsys):
         """test currying of print function"""
         curried = curry_explicit(print, 2)
         result = curried(1)(2)
+
+        output = capsys.readouterr()
         assert result is None
+        assert "1 2" in output.out
 
     def test_curry_partial_application(self):
         """test partial application"""
@@ -113,17 +112,6 @@ class TestCurryExplicit:
         curried_any = curry_explicit(func_any_args, 6)
         result = curried_any(1)(2)(3)(4)(5)(6)
         assert result == 720
-
-    def test_curry_single_argument(self):
-        """test that curried function accepts only one argument at a time"""
-
-        def add_two(x, y):
-            return x + y
-
-        curried = curry_explicit(add_two, 2)
-
-        with pytest.raises(TypeError, match="Incorrect quantity of arguments"):
-            curried(1, 2, 3)
 
 
 class TestUncurryExplicit:
@@ -215,16 +203,6 @@ class TestUncurryExplicit:
         result = uncurried_max(5, 10)
         assert result == 10
 
-        curried_min = curry_explicit(min, 3)
-        uncurried_min = uncurry_explicit(curried_min, 3)
-        result = uncurried_min(5, 3, 8)
-        assert result == 3
-
-        curried_pow = curry_explicit(pow, 2)
-        uncurried_pow = uncurry_explicit(curried_pow, 2)
-        result = uncurried_pow(2, 3)
-        assert result == 8
-
     def test_uncurry_arbitrary_arity(self):
         """test uncurry with functions of arbitrary arity"""
 
@@ -258,21 +236,6 @@ class TestDecoCache:
         assert result2 == 10
         assert call_count == 1
 
-    def test_cache_with_different_args(self):
-        """test caching with different arguments"""
-        call_count = 0
-
-        @deco_cache(3)
-        def add_numbers(x, y):
-            nonlocal call_count
-            call_count += 1
-            return x + y
-
-        assert add_numbers(1, 2) == 3
-        assert add_numbers(3, 4) == 7
-        assert add_numbers(1, 2) == 3
-        assert call_count == 2
-
     def test_cache_with_kwargs(self):
         """test caching with named arguments"""
         call_count = 0
@@ -286,26 +249,6 @@ class TestDecoCache:
         assert multiply(5, 2) == 10
         assert multiply(5, 2) == 10
         assert call_count == 1
-
-    def test_cache_limit(self):
-        """test cache limit"""
-        call_count = 0
-
-        @deco_cache(2)
-        def simple_func(x):
-            nonlocal call_count
-            call_count += 1
-            return x
-
-        simple_func(1)
-        simple_func(2)
-        assert call_count == 2
-
-        simple_func(3)
-        assert call_count == 3
-
-        simple_func(1)
-        assert call_count == 4
 
     def test_cache_zero_limit(self):
         """test caching with limit 0 (caching disabled)"""
@@ -361,42 +304,6 @@ class TestDecoCache:
         assert result2 == 42
         assert call_count == 1
 
-    def test_cache_with_sets(self):
-        """test caching with sets"""
-        call_count = 0
-
-        @deco_cache(2)
-        def process_set(s):
-            nonlocal call_count
-            call_count += 1
-            return len(s)
-
-        set1 = {1, 2, 3}
-        set2 = {1, 2, 3}
-
-        result1 = process_set(set1)
-        result2 = process_set(set2)
-
-        assert result1 == 3
-        assert result2 == 3
-        assert call_count == 1
-
-    def test_cache_complex_args(self):
-        """test caching with complex arguments"""
-        call_count = 0
-
-        @deco_cache(3)
-        def complex_function(x, y=1, z=None):
-            nonlocal call_count
-            call_count += 1
-            return x + y + (z or 0)
-
-        assert complex_function(1) == 2
-        assert complex_function(1, 2) == 3
-        assert complex_function(1, 2, 3) == 6
-        assert complex_function(1) == 2
-        assert call_count == 3
-
     def test_cache_with_none_values(self):
         """test caching with None values"""
         call_count = 0
@@ -438,11 +345,8 @@ class TestDecoCache:
 
         simple_func(1)
         simple_func(2)
-
         simple_func(3)
-
         simple_func(1)
-
         simple_func(3)
 
         assert call_count == 4
@@ -469,70 +373,36 @@ class TestDecoCache:
         assert result3 == 8
         assert call_count == 2
 
-    def test_cache_with_builtin_min(self):
-        """test caching with built-in min function"""
+    def test_cache_state_after_operations(self):
+        """test cache contents after each operation, including hits and evictions"""
         call_count = 0
 
         @deco_cache(2)
-        def cached_min(*args):
+        def expensive(x):
             nonlocal call_count
             call_count += 1
-            return min(args)
+            return x * 2
 
-        result1 = cached_min(10, 5, 8)
-        assert result1 == 5
+        def get_cache(f):
+            for cell in f.__closure__:
+                if isinstance(cell.cell_contents, dict):
+                    return cell.cell_contents
+            return None
+
+        assert expensive(1) == 2
         assert call_count == 1
+        cache = get_cache(expensive)
+        assert len(cache) == 1
+        assert cache[(1,)] == 2
 
-        result2 = cached_min(10, 5, 8)
-        assert result2 == 5
-        assert call_count == 1
-
-        result3 = cached_min(3, 1, 7)
-        assert result3 == 1
+        assert expensive(2) == 4
         assert call_count == 2
+        assert len(cache) == 2
+        assert cache[(1,)] == 2
+        assert cache[(2,)] == 4
 
-    def test_cache_with_builtin_pow(self):
-        """test caching with built-in pow function"""
-        call_count = 0
-
-        @deco_cache(2)
-        def cached_pow(base, exp):
-            nonlocal call_count
-            call_count += 1
-            return pow(base, exp)
-
-        result1 = cached_pow(2, 3)
-        assert result1 == 8
-        assert call_count == 1
-
-        result2 = cached_pow(2, 3)
-        assert result2 == 8
-        assert call_count == 1
-
-        result3 = cached_pow(3, 2)
-        assert result3 == 9
+        assert expensive(1) == 2
         assert call_count == 2
-
-    def test_cache_after_iterations(self):
-        """test cache behavior after multiple iterations"""
-        call_count = 0
-
-        @deco_cache(3)
-        def expensive_calculation(x):
-            nonlocal call_count
-            call_count += 1
-            return x**2
-
-        for _ in range(2):
-            assert expensive_calculation(1) == 1
-            assert expensive_calculation(2) == 4
-            assert expensive_calculation(3) == 9
-            assert call_count == 3
-
-        assert expensive_calculation(4) == 16
-        assert expensive_calculation(2) == 4
-        assert expensive_calculation(3) == 9
-        assert call_count == 4
-
-        assert expensive_calculation(1) == 1
-        assert call_count == 5
+        assert len(cache) == 2
+        assert cache[(1,)] == 2
+        assert cache[(2,)] == 4

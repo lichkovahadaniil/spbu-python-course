@@ -14,14 +14,31 @@ def curry_explicit(func: Callable, arity: int) -> Callable:
     if arity < 0:
         raise ValueError(f"The arity must be greater, than 0")
 
+    curr = dict()
+
     def inner(*args: Any) -> Callable:
+        nonlocal curr
+        if len(curr) == 0:
+            if len(args) > 1:
+                raise TypeError(
+                    f"Incorrect quantity of arguments :(\n got {len(args)}, expected {arity}\n"
+                )
+        else:
+            if len(curr[0]) > 1:
+                raise TypeError("Incorrect quantity of arguments")
+
         if len(args) > arity:
             raise TypeError(
                 f"Incorrect quantity of arguments :(\n got {len(args)}, expected {arity}\n"
             )
         elif len(args) == arity:
             return func(*args)
-        return lambda x: inner(*args, x)
+
+        def next_call(*new_arg):
+            curr[0] = new_arg
+            return inner(*args, *new_arg)
+
+        return next_call
 
     return inner
 
@@ -75,7 +92,6 @@ def deco_cache(num: int = 0) -> Callable:
             return arg
 
         def inner(*args, **kwargs) -> Any:
-            curr = dict()
 
             if num == 0:
                 return func(*args, **kwargs)
@@ -92,14 +108,9 @@ def deco_cache(num: int = 0) -> Callable:
             else:
                 res = save[keys]
 
-            cnt = 0
             if len(save) > num:
-                for key in save:
-                    if cnt > 0:
-                        curr[key] = save[key]
-                    cnt += 1
-                save = curr.copy()
-                curr.clear()
+                oldest_key = next(iter(save))
+                del save[oldest_key]
 
             return res
 
