@@ -1,0 +1,408 @@
+import pytest
+import sys
+import io
+from project.task3.curry_cache import curry_explicit, uncurry_explicit, deco_cache
+from math import prod
+
+
+class TestCurryExplicit:
+    """tests for curry_explicit"""
+
+    def test_curry_basic_functionality(self):
+        """test basic functionality of currying"""
+
+        def add_three(x, y, z):
+            return x + y + z
+
+        curried = curry_explicit(add_three, 3)
+        result = curried(1)(2)(3)
+        assert result == 6
+
+    def test_curry_arity_zero(self):
+        """test currying with arity 0"""
+
+        def get_constant():
+            return 42
+
+        curried = curry_explicit(get_constant, 0)
+        result = curried()
+        assert result == 42
+
+    def test_curry_negative_arity(self):
+        """test error when arity is negative"""
+
+        def dummy_func():
+            pass
+
+        with pytest.raises(ValueError, match="The arity must be greater, than 0"):
+            curry_explicit(dummy_func, -1)
+
+    def test_curry_too_many_args(self):
+        """test error when is more 1 argument in the curry func"""
+
+        def add_two(x, y, z):
+            return x + y + z
+
+        curried = curry_explicit(add_two, 3)
+
+        with pytest.raises(TypeError, match="Incorrect quantity of arguments"):
+            curried(1, 2)(3)
+        with pytest.raises(TypeError, match="Incorrect quantity of arguments"):
+            curried(1)(3, 4)
+        with pytest.raises(TypeError, match="Incorrect quantity of arguments"):
+            curried(1, 2, 3)
+
+    def test_curry_lambda_function(self):
+        """test currying of lambda function"""
+        curried = curry_explicit((lambda x, y, z: f"<{x},{y},{z}>"), 3)
+        result = curried(123)(456)(562)
+        assert result == "<123,456,562>"
+
+    def test_curry_with_print(self, capsys):
+        """test currying of print function"""
+        curried = curry_explicit(print, 2)
+        result = curried(1)(2)
+
+        output = capsys.readouterr()
+        assert result is None
+        assert "1 2" in output.out
+
+    def test_curry_partial_application(self):
+        """test partial application"""
+
+        def multiply_four(a, b, c, d):
+            return a * b * c * d
+
+        curried = curry_explicit(multiply_four, 4)
+        partial = curried(2)(3)
+        result = partial(4)(5)
+        assert result == 120
+
+    def test_curry_with_different_types(self):
+        """test currying with different types of data"""
+
+        def concat_strings(a, b, c):
+            return f"{a}{b}{c}"
+
+        curried = curry_explicit(concat_strings, 3)
+        result = curried("Hello")(" ")("World")
+        assert result == "Hello World"
+
+    def test_curry_with_builtin_functions(self):
+        """test currying with built-in Python functions"""
+
+        curried_max = curry_explicit(max, 2)
+        result = curried_max(5)(10)
+        assert result == 10
+
+        curried_min = curry_explicit(min, 3)
+        result = curried_min(5)(3)(8)
+        assert result == 3
+
+        curried_pow = curry_explicit(pow, 2)
+        result = curried_pow(2)(3)
+        assert result == 8
+
+    def test_curry_arbitrary_arity(self):
+        """test currying with functions of arbitrary arity"""
+
+        def func_any_args(*args):
+            return prod(args)
+
+        curried_any = curry_explicit(func_any_args, 6)
+        result = curried_any(1)(2)(3)(4)(5)(6)
+        assert result == 720
+
+
+class TestUncurryExplicit:
+    """tests for uncurry_explicit"""
+
+    def test_uncurry_basic_functionality(self):
+        """test basic functionality of uncurry"""
+
+        def add_three(x, y, z):
+            return x + y + z
+
+        curried = curry_explicit(add_three, 3)
+        uncurried = uncurry_explicit(curried, 3)
+        result = uncurried(1, 2, 3)
+        assert result == 6
+
+    def test_uncurry_arity_zero(self):
+        """test uncurry with arity 0"""
+
+        def get_constant():
+            return 42
+
+        curried = curry_explicit(get_constant, 0)
+        uncurried = uncurry_explicit(curried, 0)
+        result = uncurried()
+        assert result() == 42
+
+    def test_uncurry_arity_one(self):
+        """test uncurry with arity 1"""
+
+        def square(x):
+            return x * x
+
+        curried = curry_explicit(square, 1)
+        uncurried = uncurry_explicit(curried, 1)
+        result = uncurried(5)
+        assert result == 25
+
+    def test_uncurry_negative_arity(self):
+        """test error when arity is negative"""
+
+        def dummy_func():
+            pass
+
+        with pytest.raises(ValueError, match="The arity must be greater, than 0"):
+            uncurry_explicit(dummy_func, -1)
+
+    def test_uncurry_wrong_number_of_args(self):
+        """test error when wrong number of arguments are passed"""
+
+        def add_two(x, y):
+            return x + y
+
+        curried = curry_explicit(add_two, 2)
+        uncurried = uncurry_explicit(curried, 2)
+
+        with pytest.raises(TypeError, match="Incorrect quantity of arguments"):
+            uncurried(1, 2, 3)
+
+        with pytest.raises(TypeError, match="Incorrect quantity of arguments"):
+            uncurried(1)
+
+    def test_uncurry_lambda_function(self):
+        """test uncurry with lambda function"""
+        curried = curry_explicit((lambda x, y, z: f"<{x},{y},{z}>"), 3)
+        uncurried = uncurry_explicit(curried, 3)
+        result = uncurried(123, 456, 562)
+        assert result == "<123,456,562>"
+
+    def test_curry_uncurry_roundtrip(self):
+        """test that curry -> uncurry returns the original functionality"""
+
+        def original_func(a, b, c, d):
+            return a + b * c - d
+
+        curried = curry_explicit(original_func, 4)
+        uncurried = uncurry_explicit(curried, 4)
+
+        args = (10, 2, 3, 5)
+        original_result = original_func(*args)
+        uncurried_result = uncurried(*args)
+        assert original_result == uncurried_result == 11
+
+    def test_uncurry_with_builtin_functions(self):
+        """test uncurry with built-in Python functions"""
+
+        curried_max = curry_explicit(max, 2)
+        uncurried_max = uncurry_explicit(curried_max, 2)
+        result = uncurried_max(5, 10)
+        assert result == 10
+
+    def test_uncurry_arbitrary_arity(self):
+        """test uncurry with functions of arbitrary arity"""
+
+        def func_any_args(*args):
+            return prod(args)
+
+        curried = curry_explicit(func_any_args, 6)
+        uncurried = uncurry_explicit(curried, 6)
+        result = uncurried(1, 2, 3, 4, 5, 6)
+        assert result == 720
+
+
+class TestDecoCache:
+    """tests for deco_cache"""
+
+    def test_cache_basic_functionality(self):
+        """test basic functionality of caching"""
+        call_count = 0
+
+        @deco_cache(2)
+        def expensive_function(x):
+            nonlocal call_count
+            call_count += 1
+            return x * 2
+
+        result1 = expensive_function(5)
+        assert result1 == 10
+        assert call_count == 1
+
+        result2 = expensive_function(5)
+        assert result2 == 10
+        assert call_count == 1
+
+    def test_cache_with_kwargs(self):
+        """test caching with named arguments"""
+        call_count = 0
+
+        @deco_cache(2)
+        def multiply(x, y=1):
+            nonlocal call_count
+            call_count += 1
+            return x * y
+
+        assert multiply(5, 2) == 10
+        assert multiply(5, 2) == 10
+        assert call_count == 1
+
+    def test_cache_zero_limit(self):
+        """test caching with limit 0 (caching disabled)"""
+        call_count = 0
+
+        @deco_cache(0)
+        def no_cache_func(x):
+            nonlocal call_count
+            call_count += 1
+            return x * 2
+
+        assert no_cache_func(5) == 10
+        assert no_cache_func(5) == 10
+        assert call_count == 2
+
+    def test_cache_with_mutable_objects(self):
+        """test caching with mutable objects"""
+        call_count = 0
+
+        @deco_cache(2)
+        def process_list(lst):
+            nonlocal call_count
+            call_count += 1
+            return sum(lst)
+
+        list1 = [1, 2, 3]
+        list2 = [1, 2, 3]
+
+        result1 = process_list(list1)
+        result2 = process_list(list2)
+
+        assert result1 == 6
+        assert result2 == 6
+        assert call_count == 1
+
+    def test_cache_with_dicts(self):
+        """test caching with dictionaries"""
+        call_count = 0
+
+        @deco_cache(2)
+        def process_dict(d):
+            nonlocal call_count
+            call_count += 1
+            return d.get("value", 0)
+
+        dict1 = {"value": 42}
+        dict2 = {"value": 42}
+
+        result1 = process_dict(dict1)
+        result2 = process_dict(dict2)
+
+        assert result1 == 42
+        assert result2 == 42
+        assert call_count == 1
+
+    def test_cache_with_none_values(self):
+        """test caching with None values"""
+        call_count = 0
+
+        @deco_cache(2)
+        def handle_none(x, y=None):
+            nonlocal call_count
+            call_count += 1
+            return x if y is None else x + y
+
+        assert handle_none(5) == 5
+        assert handle_none(5) == 5
+        assert handle_none(5, None) == 5
+        assert call_count == 2
+
+    def test_cache_with_empty_containers(self):
+        """test caching with empty containers"""
+        call_count = 0
+
+        @deco_cache(3)
+        def process_empty(lst, dct, st):
+            nonlocal call_count
+            call_count += 1
+            return len(lst) + len(dct) + len(st)
+
+        assert process_empty([], {}, set()) == 0
+        assert process_empty([], {}, set()) == 0
+        assert call_count == 1
+
+    def test_cache_lru_behavior(self):
+        """test LRU behavior of cache"""
+        call_count = 0
+
+        @deco_cache(2)
+        def simple_func(x):
+            nonlocal call_count
+            call_count += 1
+            return x * 2
+
+        simple_func(1)
+        simple_func(2)
+        simple_func(3)
+        simple_func(1)
+        simple_func(3)
+
+        assert call_count == 4
+
+    def test_cache_with_builtin_functions(self):
+        """test caching with built in Python functions"""
+        call_count = 0
+
+        @deco_cache(3)
+        def cached_max(*args):
+            nonlocal call_count
+            call_count += 1
+            return max(args)
+
+        result1 = cached_max(1, 5, 3)
+        assert result1 == 5
+        assert call_count == 1
+
+        result2 = cached_max(1, 5, 3)
+        assert result2 == 5
+        assert call_count == 1
+
+        result3 = cached_max(2, 8, 1)
+        assert result3 == 8
+        assert call_count == 2
+
+    def test_cache_state_after_operations(self):
+        """test cache contents after each operation, including hits and evictions"""
+        call_count = 0
+
+        @deco_cache(2)
+        def expensive(x):
+            nonlocal call_count
+            call_count += 1
+            return x * 2
+
+        def get_cache(f):
+            for cell in f.__closure__:
+                if isinstance(cell.cell_contents, dict):
+                    return cell.cell_contents
+            return None
+
+        assert expensive(1) == 2
+        assert call_count == 1
+        cache = get_cache(expensive)
+        assert len(cache) == 1
+        assert cache[(1,)] == 2
+
+        assert expensive(2) == 4
+        assert call_count == 2
+        assert len(cache) == 2
+        assert cache[(1,)] == 2
+        assert cache[(2,)] == 4
+
+        assert expensive(1) == 2
+        assert call_count == 2
+        assert len(cache) == 2
+        assert cache[(1,)] == 2
+        assert cache[(2,)] == 4
