@@ -11,8 +11,7 @@ from project.task4.game import Game
 
 class TestWheel:
     def test_spin_green(self):
-        # Force a green outcome by seeding to get 0
-        wheel = Wheel(seed=52)  # Adjust seed if needed to get 0; tested to produce 0
+        wheel = Wheel(seed=52)
         for _ in range(100):
             num, color = wheel.spin()
             if num == 0:
@@ -24,7 +23,7 @@ class TestWheel:
 class TestBetResolution:
     @pytest.fixture
     def game_fixture(self):
-        return Game(bots=[], seed=3847)  # Just for resolve_bet
+        return Game(bots=[], seed=3847)
 
     def test_resolve_number_win(self, game_fixture):
         bet = Bet(10, "number", 26)
@@ -86,11 +85,10 @@ class TestFixBot:
     def test_record_result(self):
         bot = FixBot("fix", 50, amount=5)
         bet = Bet(5, "color", "black")
-        bot.record_result(bet, (26, "black"), 5, True)  # Win, payout=5 (net profit)
+        bot.record_result(bet, (26, "black"), 5, True)
         assert len(bot.history) == 1
         assert bot.history[0]["win"] is True
         assert bot.history[0]["payout"] == 5
-        # Bankroll not updated here, as it's done in Game
 
 
 class TestMurderBot:
@@ -104,17 +102,17 @@ class TestMurderBot:
 
     def test_after_loss_increase(self):
         bot = MurderBot("murder", 50, base_bet=2, inc_red=2)
-        bot.betting()  # First bet, but don't subtract here
+        bot.betting()
         bot.record_result(Bet(2, "color", "red"), (26, "black"), -2, False)
         bet = bot.betting()
-        assert bet.amount == 4  # 2 + 2
+        assert bet.amount == 4
 
     def test_after_win_reset(self):
         bot = MurderBot("murder", 50, base_bet=2, inc_red=2)
         bot.betting()
         bot.record_result(Bet(2, "color", "red"), (21, "red"), 2, True)
         bet = bot.betting()
-        assert bet.amount == 2  # Reset to base
+        assert bet.amount == 2
 
     def test_low_bankroll(self):
         bot = MurderBot("murder", 1, min_bet=2, base_bet=2, inc_red=2)
@@ -124,7 +122,6 @@ class TestMurderBot:
 
 class TestRandomBot:
     def test_betting_with_seed(self):
-        # To make random reproducible, but since random not seeded in bot, we can't directly, but assume it bets something
         bot = RandomBot("rand", 50, min_bet=1)
         bet = bot.betting()
         assert bet is not None
@@ -155,7 +152,7 @@ class TestGame:
     def test_state_initial(self, game_with_bots):
         state = game_with_bots.state()
         assert state["round"] == 0
-        assert len(state["bot_states"]) == 3  # At least three strategies
+        assert len(state["bot_states"]) == 3
         assert state["bot_states"][0]["bankroll"] == 50
         assert state["history_len"] == 0
 
@@ -167,14 +164,12 @@ class TestGame:
         assert (
             new_state["bot_states"][0]["bankroll"]
             != initial_state["bot_states"][0]["bankroll"]
-        )  # Likely changed
+        )
         assert new_state["history_len"] == 1
 
     def test_step_updates_bankrolls(self, game_with_bots, bots_fixture):
-        game_with_bots.step()  # Outcome (26, black)
-        # FixBot bets black 5, wins: +5 net, bankroll 50-5 +10=55
+        game_with_bots.step()
         assert bots_fixture[0].bankroll == 55
-        # MurderBot bets red 2, loses: -2, bankroll 48
         assert bots_fixture[1].bankroll == 48
         assert len(bots_fixture[0].history) == 1
         assert bots_fixture[0].history[0]["win"] is True
@@ -184,16 +179,14 @@ class TestGame:
         result = game_with_bots.run()
         assert result["rounds_played"] == 10
         assert len(result["history"]) == 10
-        assert result["winners"] == []  # Likely no one reaches 100 in 10 rounds
+        assert result["winners"] == []
 
     def test_run_with_target_reached(self, bots_fixture):
         game = Game(
             bots_fixture, min_bet=1, max_rounds=100, target_bankroll=55, seed=3847
         )
         result = game.run()
-        assert (
-            result["rounds_played"] < 100
-        )  # Should stop early when fix reaches 55 after first step
+        assert result["rounds_played"] < 100
         assert "fix" in result["winners"]
 
     def test_all_broke_stops(self):
@@ -204,17 +197,16 @@ class TestGame:
         ]
         game = Game(broke_bots, min_bet=1, max_rounds=10)
         result = game.run()
-        assert result["rounds_played"] == 0  # Doesn't start since all < min_bet
+        assert result["rounds_played"] == 0
 
     def test_payout_number_win(self):
-        # Manual setup for number bet
         class CustomBot(Bot):
             def betting(self) -> Optional[Bet]:
                 return Bet(10, "number", 26)
 
         custom = CustomBot("custom", 50, min_bet=1)
         game = Game([custom], seed=3847)
-        game.step()  # Outcome 26, win 35:1, net +350, bankroll 50-10 +360=400
+        game.step()
         assert custom.bankroll == 400
         assert custom.history[0]["payout"] == 350
         assert custom.history[0]["win"] is True
@@ -225,4 +217,4 @@ class TestGame:
         record = game_with_bots.history[0]
         assert record["round"] == 1
         assert record["outcome"] == (29, "black")
-        assert len(record["bets"]) == 3  # Three bots
+        assert len(record["bets"]) == 3

@@ -136,8 +136,10 @@ class Game:
 
     def run(self, verbose: bool = False) -> dict[str, Any]:
         """
-        Запустить игру до завершения условия.
-        Возвращает финальный снимок: history и победители (если есть).
+        for run game
+
+        returns:
+            finally list and winners (if there are any)
         """
         winners = []
         while True:
