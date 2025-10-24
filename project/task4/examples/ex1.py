@@ -1,6 +1,4 @@
-from project.task4.fixbot import FixBot
-from project.task4.murder_bot import MurderBot
-from project.task4.random_bot import RandomBot
+from project.task4.bot import MurderBot, RandomBot, FixBot
 from project.task4.game import Game
 
 

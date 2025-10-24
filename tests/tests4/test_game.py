@@ -1,10 +1,7 @@
 import pytest
 from typing import Optional
 from project.task4.bet import Bet
-from project.task4.bot import Bot
-from project.task4.fixbot import FixBot
-from project.task4.murder_bot import MurderBot
-from project.task4.random_bot import RandomBot
+from project.task4.bot import Bot, FixBot, MurderBot, RandomBot
 from project.task4.wheel_ import Wheel
 from project.task4.game import Game
 
