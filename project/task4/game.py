@@ -1,8 +1,8 @@
 from typing import cast, Any, Optional
 import random as r
 from project.task4.bot import Bot
-from project.task4.wheel_ import Wheel
-from project.task4.bet import Bet
+from project.task4.wheel_ import Wheel, Color
+from project.task4.bet import Bet, ForBet
 
 
 class Game:
@@ -55,18 +55,18 @@ class Game:
         returns (payout, won_flag): payout for bot, win/loose
         """
         number, color = outcome
-        if bet.kind == "number":
+        if bet.kind == ForBet.NUMBER.value:
             if bet.value == number:
                 return True
 
-        elif bet.kind == "color":
+        elif bet.kind == Color.COLOR.value:
             if number != 0 and bet.value == color:
                 return True
 
-        elif bet.kind == "parity":
+        elif bet.kind == ForBet.PARITY.value:
             if number == 0:
                 return False
-            parity = "even" if number % 2 == 0 else "odd"
+            parity = ForBet.EVEN.value if number % 2 == 0 else ForBet.ODD.value
             if parity == bet.value:
                 return True
 
@@ -118,7 +118,7 @@ class Game:
             else:
                 won = self.resolve_bet(bet, outcome)
                 if won:
-                    if bet.kind == "number":
+                    if bet.kind == ForBet.NUMBER.value:
                         win_profit = bet.amount * 35
                         b.bankroll += bet.amount + win_profit
                         payout = win_profit  # net profit over bet

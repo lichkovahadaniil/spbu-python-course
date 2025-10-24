@@ -1,3 +1,7 @@
+from project.task4.wheel_ import Color
+from enum import Enum
+
+
 class Bet:
     """
     class for bets
@@ -15,3 +19,17 @@ class Bet:
         self.amount = amount
         self.kind = kind
         self.value = value
+
+
+class ForBet(Enum):
+    """
+    class for enum:
+
+    enums variables:
+
+    """
+
+    NUMBER = "number"
+    PARITY = "parity"
+    EVEN = "even"
+    ODD = "odd"

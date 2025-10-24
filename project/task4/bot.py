@@ -1,7 +1,8 @@
 import abc
 from typing import Optional, Any
-from project.task4.bet import Bet
+from project.task4.bet import Bet, ForBet
 import random as r
+from project.task4.wheel_ import Color
 
 
 class Bot(abc.ABC):
@@ -14,7 +15,7 @@ class Bot(abc.ABC):
         constructor for bots
 
         args:
-            bot_id (int): bot id
+            bot_id (str): bot id
             bankroll (int): bankroll
             min_bet (int) (default=1): min bet
         """
@@ -75,8 +76,8 @@ class FixBot(Bot):
         bankroll: int,
         amount: int,
         min_bet: int = 1,
-        fixed_kind: str = "color",
-        fixed_val: Any = "black",
+        fixed_kind: str = Color.COLOR.value,
+        fixed_val: str = Color.BLACK.value,
     ) -> None:
         """
         FixBot constructor
@@ -86,7 +87,7 @@ class FixBot(Bot):
             bankroll (int): bankroll of this bot
             min_bet (int) (default=1): minimum bet value
             fixed_knd (str) (default="color"): fixed kind = color
-            fixed_val (Any) (default="black): fixed color = black
+            fixed_val (str) (default="black): fixed color = black
         returns:
             None
         """
@@ -157,12 +158,18 @@ class MurderBot(Bot):
                 self.curr_bet += self.inc_red
 
         if self.min_bet < self.curr_bet < self.bankroll:
-            return Bet(amount=self.curr_bet, kind="color", value="red")
+            return Bet(
+                amount=self.curr_bet, kind=Color.COLOR.value, value=Color.RED.value
+            )
         else:
             if self.min_bet > self.curr_bet:
-                return Bet(amount=self.min_bet, kind="color", value="red")
+                return Bet(
+                    amount=self.min_bet, kind=Color.COLOR.value, value=Color.RED.value
+                )
             else:
-                return Bet(amount=self.bankroll, kind="color", value="red")
+                return Bet(
+                    amount=self.bankroll, kind=Color.COLOR.value, value=Color.RED.value
+                )
 
 
 class RandomBot(Bot):
@@ -180,12 +187,12 @@ class RandomBot(Bot):
         if self.bankroll < self.min_bet:
             return None
         amt = r.randint(self.min_bet, self.bankroll)
-        kind = r.choice(["color", "number", "parity"])
+        kind = r.choice([Color.COLOR.value, ForBet.NUMBER.value, ForBet.PARITY.value])
         val: int | str = 0
-        if kind == "color":
-            val = r.choice(["red", "black"])
-        elif kind == "parity":
-            val = r.choice(["even", "odd"])
+        if kind == Color.COLOR.value:
+            val = r.choice([Color.RED.value, Color.BLACK.value])
+        elif kind == ForBet.PARITY.value:
+            val = r.choice([ForBet.EVEN.value, ForBet.ODD.value])
         else:
             val = r.randint(0, 36)
         return Bet(amount=amt, kind=kind, value=val)

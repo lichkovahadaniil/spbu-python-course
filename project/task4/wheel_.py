@@ -1,5 +1,23 @@
 from typing import Union
 import random as r
+from enum import Enum
+
+
+class Color(Enum):
+    """
+    class for enum:
+
+    enums variables:
+        color
+        red
+        black
+        green
+    """
+
+    COLOR = "color"
+    RED = "red"
+    BLACK = "black"
+    GREEN = "green"
 
 
 class Wheel:
@@ -33,9 +51,9 @@ class Wheel:
             color (str): output color
         """
         num = r.choice(self.nums)
-        color = "green"
+        color = Color.GREEN.value
         if num in self.red:
-            color = "red"
+            color = Color.RED.value
         elif num != 0:
-            color = "black"
+            color = Color.BLACK.value
         return num, color

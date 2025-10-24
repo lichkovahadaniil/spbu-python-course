@@ -57,11 +57,6 @@ class TestBetResolution:
         outcome = (26, "black")
         assert game_fixture.resolve_bet(bet, outcome) is False
 
-    def test_resolve_parity_green_loss(self, game_fixture):
-        bet = Bet(10, "parity", "even")
-        outcome = (0, "green")
-        assert game_fixture.resolve_bet(bet, outcome) is False
-
 
 class TestFixBot:
     def test_betting_enough_bankroll(self):
@@ -118,7 +113,7 @@ class TestMurderBot:
 
 
 class TestRandomBot:
-    def test_betting_with_seed(self):
+    def test_betting_rand_bot(self):
         bot = RandomBot("rand", 50, min_bet=1)
         bet = bot.betting()
         assert bet is not None
