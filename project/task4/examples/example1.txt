@@ -1,0 +1,237 @@
+Round 1: outcome = 26 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=55
+  murder_bro: bet(color=red, 2) -> LOSE, bankroll=48
+  ugaday_cho_vikinu: bet(number=5, 4) -> LOSE, bankroll=46
+----------------------------------------
+Round 2: outcome = 24 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=60
+  murder_bro: bet(color=red, 4) -> LOSE, bankroll=44
+  ugaday_cho_vikinu: bet(color=red, 18) -> LOSE, bankroll=28
+----------------------------------------
+Round 3: outcome = 21 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=55
+  murder_bro: bet(color=red, 6) -> WIN, bankroll=50
+  ugaday_cho_vikinu: bet(parity=odd, 18) -> WIN, bankroll=46
+----------------------------------------
+Round 4: outcome = 21 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=50
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=52
+  ugaday_cho_vikinu: bet(color=red, 4) -> WIN, bankroll=50
+----------------------------------------
+Round 5: outcome = 10 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=55
+  murder_bro: bet(color=red, 2) -> LOSE, bankroll=50
+  ugaday_cho_vikinu: bet(number=15, 36) -> LOSE, bankroll=14
+----------------------------------------
+Round 6: outcome = 24 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=60
+  murder_bro: bet(color=red, 4) -> LOSE, bankroll=46
+  ugaday_cho_vikinu: bet(number=5, 1) -> LOSE, bankroll=13
+----------------------------------------
+Round 7: outcome = 28 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=65
+  murder_bro: bet(color=red, 6) -> LOSE, bankroll=40
+  ugaday_cho_vikinu: bet(color=black, 2) -> WIN, bankroll=15
+----------------------------------------
+Round 8: outcome = 9 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=60
+  murder_bro: bet(color=red, 8) -> WIN, bankroll=48
+  ugaday_cho_vikinu: bet(color=red, 2) -> WIN, bankroll=17
+----------------------------------------
+Round 9: outcome = 27 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=55
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=50
+  ugaday_cho_vikinu: bet(color=black, 5) -> LOSE, bankroll=12
+----------------------------------------
+Round 10: outcome = 30 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=50
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=52
+  ugaday_cho_vikinu: bet(number=16, 10) -> LOSE, bankroll=2
+----------------------------------------
+Round 11: outcome = 33 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=55
+  murder_bro: bet(color=red, 2) -> LOSE, bankroll=50
+  ugaday_cho_vikinu: bet(number=21, 1) -> LOSE, bankroll=1
+----------------------------------------
+Round 12: outcome = 0 (green)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=50
+  murder_bro: bet(color=red, 4) -> LOSE, bankroll=46
+  ugaday_cho_vikinu: bet(color=black, 1) -> LOSE, bankroll=0
+----------------------------------------
+Round 13: outcome = 25 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=45
+  murder_bro: bet(color=red, 6) -> WIN, bankroll=52
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 14: outcome = 32 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=40
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=54
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 15: outcome = 27 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=35
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=56
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 16: outcome = 34 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=30
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=58
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 17: outcome = 31 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=35
+  murder_bro: bet(color=red, 2) -> LOSE, bankroll=56
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 18: outcome = 33 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=40
+  murder_bro: bet(color=red, 4) -> LOSE, bankroll=52
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 19: outcome = 26 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=45
+  murder_bro: bet(color=red, 6) -> LOSE, bankroll=46
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 20: outcome = 23 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=40
+  murder_bro: bet(color=red, 8) -> WIN, bankroll=54
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 21: outcome = 32 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=35
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=56
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 22: outcome = 2 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=40
+  murder_bro: bet(color=red, 2) -> LOSE, bankroll=54
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 23: outcome = 11 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=45
+  murder_bro: bet(color=red, 4) -> LOSE, bankroll=50
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 24: outcome = 5 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=40
+  murder_bro: bet(color=red, 6) -> WIN, bankroll=56
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 25: outcome = 31 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=45
+  murder_bro: bet(color=red, 2) -> LOSE, bankroll=54
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 26: outcome = 16 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=40
+  murder_bro: bet(color=red, 4) -> WIN, bankroll=58
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 27: outcome = 10 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=45
+  murder_bro: bet(color=red, 2) -> LOSE, bankroll=56
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 28: outcome = 21 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=40
+  murder_bro: bet(color=red, 4) -> WIN, bankroll=60
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 29: outcome = 21 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=35
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=62
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 30: outcome = 35 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=40
+  murder_bro: bet(color=red, 2) -> LOSE, bankroll=60
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 31: outcome = 25 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=35
+  murder_bro: bet(color=red, 4) -> WIN, bankroll=64
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 32: outcome = 4 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=40
+  murder_bro: bet(color=red, 2) -> LOSE, bankroll=62
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 33: outcome = 29 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=45
+  murder_bro: bet(color=red, 4) -> LOSE, bankroll=58
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 34: outcome = 24 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=50
+  murder_bro: bet(color=red, 6) -> LOSE, bankroll=52
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 35: outcome = 36 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=45
+  murder_bro: bet(color=red, 8) -> WIN, bankroll=60
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 36: outcome = 21 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=40
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=62
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 37: outcome = 1 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=35
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=64
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 38: outcome = 12 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=30
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=66
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 39: outcome = 5 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=25
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=68
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 40: outcome = 23 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=20
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=70
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 41: outcome = 0 (green)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=15
+  murder_bro: bet(color=red, 2) -> LOSE, bankroll=68
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 42: outcome = 22 (black)
+  fixprice: bet(color=black, 5) -> WIN, bankroll=20
+  murder_bro: bet(color=red, 4) -> LOSE, bankroll=64
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 43: outcome = 14 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=15
+  murder_bro: bet(color=red, 6) -> WIN, bankroll=70
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 44: outcome = 25 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=10
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=72
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 45: outcome = 34 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=5
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=74
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 46: outcome = 32 (red)
+  fixprice: bet(color=black, 5) -> LOSE, bankroll=0
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=76
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Round 47: outcome = 3 (red)
+  fixprice: passed, bankroll=0
+  murder_bro: bet(color=red, 2) -> WIN, bankroll=78
+  ugaday_cho_vikinu: passed, bankroll=0
+----------------------------------------
+Game ended after 47 rounds
+Winners: ['murder_bro']
