@@ -1,5 +1,5 @@
 import pytest
-from project.task5.hash_table_multi import HashTable
+from project.task6.hash_table_multi import HashTable
 import multiprocessing
 import random
 
