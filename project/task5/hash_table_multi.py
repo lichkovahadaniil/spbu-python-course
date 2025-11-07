@@ -1,4 +1,5 @@
 from typing import Any, Iterator
+import multiprocessing
 
 
 class HashTable:
@@ -9,8 +10,10 @@ class HashTable:
         args:
             sz (int): the size of the hash table
         """
+        self.manager: multiprocessing.managers.SyncManager = multiprocessing.Manager()
         self.size = sz
-        self.cells: list[list[tuple[Any, Any]]] = [[] for _ in range(self.size)]
+        self.cells = self.manager.list([self.manager.list() for _ in range(self.size)])
+        self.lock = self.manager.list([self.manager.Lock() for _ in range(self.size)])
 
     def hashing(self, item: Any) -> int:
         """a func for hashing elements using the remainder of the division
@@ -42,11 +45,12 @@ class HashTable:
             value (Any): value for set
         """
         ind = self.hashing(key)
-        for i in range(len(self.cells[ind])):
-            if self.cells[ind][i][0] == key:
-                self.cells[ind][i] = (key, value)
-                return
-        self.cells[ind].append((key, value))
+        with self.lock[ind]:
+            for i in range(len(self.cells[ind])):
+                if self.cells[ind][i][0] == key:
+                    self.cells[ind][i] = (key, value)
+                    return
+            self.cells[ind].append((key, value))
 
     def __delitem__(self, key: Any) -> None:
         """delete item using the key
@@ -56,11 +60,12 @@ class HashTable:
             KeyError: if key isn't found
         """
         ind = self.hashing(key)
-        for i in range(len(self.cells[ind])):
-            if self.cells[ind][i][0] == key:
-                del self.cells[ind][i]
-                return
-        raise KeyError
+        with self.lock[ind]:
+            for i in range(len(self.cells[ind])):
+                if self.cells[ind][i][0] == key:
+                    del self.cells[ind][i]
+                    return
+            raise KeyError
 
     def __contains__(self, key: Any) -> bool:
         """check item availability using the key
@@ -82,7 +87,8 @@ class HashTable:
         """
         cnt: int = 0
         for i in range(self.size):
-            cnt += len(self.cells[i])
+            with self.lock[i]:
+                cnt += len(self.cells[i])
         return cnt
 
     def __iter__(self) -> Iterator[Any]:
@@ -91,9 +97,10 @@ class HashTable:
         returns:
             Iterator[Any], which can give next item in the hash table
         """
-        for item in self.cells:
-            for key, val in item:
-                yield key
+        for item in range(len(self.cells)):
+            with self.lock[item]:
+                for key, val in self.cells[item]:
+                    yield key
 
     def keys(self) -> Iterator[Any]:
         """method for keys access
@@ -107,18 +114,20 @@ class HashTable:
         returns:
             Iterator[Any]: iterator by values
         """
-        for cell in self.cells:
-            for key, val in cell:
-                yield val
+        for i in range(self.size):
+            with self.lock[i]:
+                for key, val in self.cells[i]:
+                    yield val
 
     def items(self) -> Iterator[tuple[Any, Any]]:
         """method for keys and values access
         returns:
             Iterator[tuple[Any, Any]]: iterator by keys and values
         """
-        for cell in self.cells:
-            for key, val in cell:
-                yield (key, val)
+        for i in range(self.size):
+            with self.lock[i]:
+                for key, val in self.cells[i]:
+                    yield (key, val)
 
     def get(self, key: Any, default: Any = None) -> Any:
         """safe method for access to items in the hash table
@@ -142,23 +151,27 @@ class HashTable:
         raises:
             KeyError: if key isn't found
         """
-        if key in self:
-            value = self[key]
-            del self[key]
-            return value
-        else:
-            raise KeyError(key)
+        ind = self.hashing(key)
+        with self.lock[ind]:
+            for i, (key_in, val_in) in enumerate(self.cells[ind]):
+                if key_in == key:
+                    del self.cells[ind][i]
+                    return val_in
+        raise KeyError
 
     def clear(self) -> None:
         """remove all of the pairs (key eith value) from the hash table"""
         for i in range(self.size):
-            self.cells[i] = []
+            with self.lock[i]:
+                self.cells[i][:] = []
 
     def __repr__(self) -> str:
         """the method for output
         returns:
             str: output value - a table string view"""
         all_cell = []
-        for key in self:
-            all_cell.append(f"{key}: {self[key]}, ")
+        for i in range(self.size):
+            with self.lock[i]:
+                for key, val in self.cells[i]:
+                    all_cell.append(f"{key}: {val}, ")
         return "{" + "".join(all_cell)[:-2] + "}"
